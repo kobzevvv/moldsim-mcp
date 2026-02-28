@@ -5,12 +5,16 @@ import { getMaterialProperties } from './tools/get-material.js';
 import { validateProcessParameters } from './tools/validate-params.js';
 import { generateSimulationSpec } from './tools/generate-spec.js';
 import { listMaterials } from './knowledge/materials.js';
+import { warmupEmbedding } from './qdrant.js';
 
 export function createServer(): McpServer {
   const server = new McpServer({
     name: 'moldsim-mcp',
-    version: '0.1.0',
+    version: '0.2.0',
   });
+
+  // Start loading embedding model in background
+  warmupEmbedding();
 
   // Tool 1: Query simulation knowledge
   server.tool(
@@ -21,7 +25,7 @@ export function createServer(): McpServer {
       context: z.string().optional().describe('Additional context (material, part type, defect observed)'),
     },
     async ({ question, context }) => ({
-      content: [{ type: 'text', text: queryKnowledge(question, context) }],
+      content: [{ type: 'text', text: await queryKnowledge(question, context) }],
     })
   );
 

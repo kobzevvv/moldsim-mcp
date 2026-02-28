@@ -1,6 +1,6 @@
 {
   "name": "moldsim-mcp",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "MCP server for injection molding simulation knowledge — material properties, process validation, troubleshooting, and simulation spec generation",
   "type": "module",
   "bin": {
@@ -31,7 +31,9 @@
   "author": "MoldSim",
   "license": "MIT",
   "dependencies": {
+    "@huggingface/transformers": "^3.8.1",
     "@modelcontextprotocol/sdk": "^1.12.0",
+    "@qdrant/js-client-rest": "^1.17.0",
     "zod": "^3.25.0"
   },
   "devDependencies": {

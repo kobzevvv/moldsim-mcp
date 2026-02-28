@@ -1,26 +1,37 @@
 import { searchTroubleshooting, formatTroubleshooting } from '../knowledge/troubleshooting.js';
 import { searchGuidelines, formatDFMRule, formatMeshGuideline, formatProcessBound } from '../knowledge/guidelines.js';
-import { findMaterial, formatMaterialProperties } from '../knowledge/materials.js';
+import { findMaterial } from '../knowledge/materials.js';
+import { searchKnowledge as qdrantSearch } from '../qdrant.js';
 
-export function queryKnowledge(question: string, context?: string): string {
+export async function queryKnowledge(question: string, context?: string): Promise<string> {
   const query = context ? `${question} ${context}` : question;
   const sections: string[] = [];
 
-  // Search troubleshooting
+  // ── Qdrant semantic search (primary) ──
+  const vectorResults = await qdrantSearch(query, 5);
+  if (vectorResults.length > 0) {
+    sections.push('# Knowledge Base Results\n');
+    for (const r of vectorResults) {
+      if (r.score < 0.25) continue; // skip low-relevance
+      sections.push(r.text);
+      sections.push('');
+    }
+  }
+
+  // ── Local keyword search (supplement) ──
   const troubleEntries = searchTroubleshooting(query);
   if (troubleEntries.length > 0) {
-    sections.push('# Troubleshooting Results\n');
-    troubleEntries.slice(0, 3).forEach(entry => {
+    sections.push('# Additional Troubleshooting\n');
+    troubleEntries.slice(0, 2).forEach(entry => {
       sections.push(formatTroubleshooting(entry));
       sections.push('');
     });
   }
 
-  // Search guidelines
   const { dfm, mesh, process } = searchGuidelines(query);
   if (dfm.length > 0) {
     sections.push('# DFM Guidelines\n');
-    dfm.slice(0, 3).forEach(rule => {
+    dfm.slice(0, 2).forEach(rule => {
       sections.push(formatDFMRule(rule));
       sections.push('');
     });
@@ -34,13 +45,13 @@ export function queryKnowledge(question: string, context?: string): string {
   }
   if (process.length > 0) {
     sections.push('# Process Parameter Bounds\n');
-    process.slice(0, 3).forEach(bound => {
+    process.slice(0, 2).forEach(bound => {
       sections.push(formatProcessBound(bound));
       sections.push('');
     });
   }
 
-  // Check if any materials are mentioned
+  // Material mentions
   const materialMatches = findMaterial(query);
   if (materialMatches.length > 0 && materialMatches.length <= 3) {
     sections.push('# Related Materials\n');
