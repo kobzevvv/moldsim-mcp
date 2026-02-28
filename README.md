@@ -54,7 +54,7 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS)
   "mcpServers": {
     "moldsim": {
       "command": "npx",
-      "args": ["-y", "@moldsim/mcp-server"]
+      "args": ["-y", "moldsim-mcp"]
     }
   }
 }
@@ -63,7 +63,7 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS)
 ### Claude Code
 
 ```bash
-claude mcp add moldsim -- npx -y @moldsim/mcp-server
+claude mcp add moldsim -- npx -y moldsim-mcp
 ```
 
 ### From source
