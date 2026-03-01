@@ -1,49 +1,34 @@
 # MoldSim MCP Server
 
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![npm](https://img.shields.io/npm/v/moldsim-mcp)](https://www.npmjs.com/package/moldsim-mcp)
+[![MCP](https://img.shields.io/badge/MCP-compatible-00e5ff)](https://modelcontextprotocol.io)
+
+**Give your AI assistant injection molding expertise.**
+
 An MCP (Model Context Protocol) server that gives AI assistants expert knowledge about injection molding simulation. Material properties, process validation, troubleshooting, and simulation specification generation — all available as tools.
+
+**Website:** [moldsim.com](https://moldsim.com)
 
 ## Why
 
 Setting up injection molding simulations (Moldflow, Moldex3D, Cadmould) requires deep knowledge: Cross-WLF viscosity models, Tait PVT data, processing windows, mesh strategies, DFM rules. This MCP server makes that knowledge available to any AI assistant that supports MCP.
 
-## Tools
+## Quick Start
 
-### `query_simulation_knowledge`
-Free-text Q&A against the knowledge base. Ask about defects, DFM rules, mesh strategies, process optimization.
+### Claude Code (recommended)
 
-```
-"Why is my part warping?" → causes, solutions, simulation checks
-"What mesh type should I use?" → midplane vs dual-domain vs 3D guidance
-"How to reduce cycle time?" → cooling optimization strategies
+```bash
+claude mcp add moldsim -- npx -y moldsim-mcp
 ```
 
-### `get_material_properties`
-Material property lookup. Returns Cross-WLF viscosity, Tait PVT, thermal, processing window, and mechanical data.
+That's it. Ask Claude about injection molding — it will automatically use MoldSim tools.
 
-**20 materials included:** ABS, PP Homo, PP Copo, PA6, PA66, PA66-GF30, PC, PC/ABS, POM, HDPE, LDPE, PMMA, PBT, PBT-GF30, PET, PS, HIPS, TPU, SAN, ASA, PPE/PS
-
+```bash
+claude "What causes warpage in glass-filled nylon parts?"
+claude "Give me the Cross-WLF parameters for PC/ABS"
+claude "Validate: ABS at 245C melt, 60C mold, 2.5mm wall"
 ```
-"PA66-GF30" → Cross-WLF coefficients, Tait PVT, processing window 275-310°C, fiber effects
-"PC" → all properties or filter by group (viscosity, thermal, processing)
-```
-
-### `validate_process_parameters`
-Checks your process parameters against the material's processing window. Flags errors, warnings, and provides suggestions.
-
-```
-material: "ABS", melt_temp_C: 280 → ERROR: exceeds max 260°C, risk of degradation
-material: "PA66", mold_temp_C: 40 → WARNING: below min 70°C, poor crystallization
-```
-
-### `generate_simulation_spec`
-Natural language → structured simulation specification. Describes the part and get back analysis types, mesh recommendations, process conditions, and expected outputs.
-
-```
-"Automotive dashboard panel in PC/ABS, 2.5mm wall, warpage analysis"
-→ Fill+Pack+Cool+Warp sequence, dual-domain mesh, process conditions, expected outputs
-```
-
-## Install
 
 ### Claude Desktop
 
@@ -60,12 +45,6 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS)
 }
 ```
 
-### Claude Code
-
-```bash
-claude mcp add moldsim -- npx -y moldsim-mcp
-```
-
 ### From source
 
 ```bash
@@ -76,6 +55,43 @@ npm run build
 ```
 
 Then point your MCP client to `node dist/index.js`.
+
+## Tools
+
+### `query_simulation_knowledge`
+Free-text Q&A against the knowledge base. Ask about defects, DFM rules, mesh strategies, process optimization.
+
+```
+"Why is my part warping?" → causes, solutions, simulation checks
+"What mesh type should I use?" → midplane vs dual-domain vs 3D guidance
+"How to reduce cycle time?" → cooling optimization strategies
+```
+
+### `get_material_properties`
+Material property lookup. Returns Cross-WLF viscosity, Tait PVT, thermal, processing window, and mechanical data.
+
+**21 materials included:** ABS, PP Homo, PP Copo, PA6, PA66, PA66-GF30, PC, PC/ABS, POM, HDPE, LDPE, PMMA, PBT, PBT-GF30, PET, PS, HIPS, TPU, SAN, ASA, PPE/PS
+
+```
+"PA66-GF30" → Cross-WLF coefficients, Tait PVT, processing window 275-310°C, fiber effects
+"PC" → all properties or filter by group (viscosity, thermal, processing)
+```
+
+### `validate_process_parameters`
+Checks your process parameters against the material's processing window. Flags errors, warnings, and provides suggestions.
+
+```
+material: "ABS", melt_temp_C: 280 → ERROR: exceeds max 260°C, risk of degradation
+material: "PA66", mold_temp_C: 40 → WARNING: below min 70°C, poor crystallization
+```
+
+### `generate_simulation_spec`
+Natural language → structured simulation specification. Describe the part and get back analysis types, mesh recommendations, process conditions, and expected outputs.
+
+```
+"Automotive dashboard panel in PC/ABS, 2.5mm wall, warpage analysis"
+→ Fill+Pack+Cool+Warp sequence, dual-domain mesh, process conditions, expected outputs
+```
 
 ## Examples
 
@@ -92,12 +108,29 @@ Ask your AI assistant:
 
 | Area | Coverage |
 |------|----------|
-| Materials | 20 grades with Cross-WLF, Tait PVT, thermal, mechanical, processing |
+| Materials | 21 grades with Cross-WLF, Tait PVT, thermal, mechanical, processing |
 | Defects | Short shot, flash, sink marks, warpage, weld lines, burn marks, jetting, splay, voids, flow marks |
 | Simulation | Mesh sensitivity, race tracking, cooling, overpacking, shear rate |
 | Process | Cycle time, gate location, V/P switchover, degradation, crystallization, fiber orientation |
 | DFM | Wall thickness, ribs, draft, radii, bosses, gating, tolerances, shrinkage, venting |
 | Meshing | Midplane, dual-domain, 3D — when to use, element sizing, quality metrics |
+
+## Compatible Software
+
+MoldSim MCP provides software-agnostic knowledge that applies to all major injection molding simulation packages:
+
+- **Autodesk Moldflow** — Adviser & Insight
+- **Moldex3D** — all editions
+- **CADMOULD** — Simcon
+- **SIGMASOFT** — Virtual Molding
+- **SolidWorks Plastics**
+
+## Tech Stack
+
+- **Runtime:** Node.js, TypeScript
+- **Search:** Qdrant vector database (local, embedded)
+- **Embeddings:** HuggingFace transformers
+- **Protocol:** Model Context Protocol (MCP)
 
 ## License
 
