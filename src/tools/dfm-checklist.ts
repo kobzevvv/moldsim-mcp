@@ -1,5 +1,4 @@
 import { findMaterial, type Material } from '../knowledge/materials.js';
-import { DFM_RULES } from '../knowledge/guidelines.js';
 
 export interface DFMInput {
   description: string;
@@ -49,12 +48,12 @@ export function generateDFMChecklist(input: DFMInput): string {
     } else if (wall < 1.0) {
       status = 'warn';
       detail = `${wall}mm is thin — requires high injection pressure and speed. Verify flow length ratio for material.`;
-    } else if (wall > 4.0) {
-      status = 'warn';
-      detail = `${wall}mm is thick — expect long cycle time, sink marks, and voids. Consider coring out to <4mm.`;
     } else if (wall > 6.0) {
       status = 'fail';
       detail = `${wall}mm is too thick — severe sink marks, voids, and very long cooling. Core out or use gas-assist / structural foam.`;
+    } else if (wall > 4.0) {
+      status = 'warn';
+      detail = `${wall}mm is thick — expect long cycle time, sink marks, and voids. Consider coring out to <4mm.`;
     } else {
       detail = `${wall}mm is within standard range (1.0–4.0mm).`;
     }
