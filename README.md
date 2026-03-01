@@ -93,6 +93,21 @@ Natural language → structured simulation specification. Describe the part and 
 → Fill+Pack+Cool+Warp sequence, dual-domain mesh, process conditions, expected outputs
 ```
 
+### `compare_materials`
+Side-by-side comparison of 2-4 materials. Processing windows, thermal properties, mechanical data, and auto-generated key differences.
+
+```
+["abs-generic", "pc", "pa66-gf30"] → comparison table with stiffness, shrinkage, heat resistance diffs
+```
+
+### `generate_dfm_checklist`
+Design for Manufacturability checklist with pass/warn/fail ratings. Input part parameters and get 15+ DFM rule checks.
+
+```
+material: "ABS", wall: 2mm, rib: 1.5mm, draft: 0.5°
+→ 16 checks: wall OK, rib WARN (75% ratio), draft WARN (below 1°), sink risk, venting...
+```
+
 ## Examples
 
 Ask your AI assistant:
@@ -101,6 +116,8 @@ Ask your AI assistant:
 - "I'm getting sink marks on my PC housing — what should I check?"
 - "Validate my process: ABS at 250°C melt, 70°C mold, 2mm wall"
 - "Generate a simulation spec for a PP container with 1.5mm walls"
+- "Compare ABS vs PC vs PA66-GF30 for an automotive connector"
+- "Run a DFM check: 2mm wall, 1.5mm ribs, 0.5° draft in PC"
 - "What mesh type should I use for a thick-walled POM gear (5mm)?"
 - "How do I fix warpage in a glass-filled PA66 connector?"
 
@@ -108,7 +125,7 @@ Ask your AI assistant:
 
 | Area | Coverage |
 |------|----------|
-| Materials | 21 grades with Cross-WLF, Tait PVT, thermal, mechanical, processing |
+| Materials | 21 grades with Cross-WLF, Tait PVT, thermal, mechanical, processing + comparison |
 | Defects | Short shot, flash, sink marks, warpage, weld lines, burn marks, jetting, splay, voids, flow marks |
 | Simulation | Mesh sensitivity, race tracking, cooling, overpacking, shear rate |
 | Process | Cycle time, gate location, V/P switchover, degradation, crystallization, fiber orientation |
