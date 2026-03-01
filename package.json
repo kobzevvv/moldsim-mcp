@@ -1,6 +1,6 @@
 {
   "name": "moldsim-mcp",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "MCP server for injection molding simulation knowledge — material properties, process validation, troubleshooting, and simulation spec generation",
   "type": "module",
   "bin": {
