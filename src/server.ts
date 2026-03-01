@@ -4,13 +4,15 @@ import { queryKnowledge } from './tools/query-knowledge.js';
 import { getMaterialProperties } from './tools/get-material.js';
 import { validateProcessParameters } from './tools/validate-params.js';
 import { generateSimulationSpec } from './tools/generate-spec.js';
+import { compareMaterials } from './tools/compare-materials.js';
+import { generateDFMChecklist } from './tools/dfm-checklist.js';
 import { listMaterials } from './knowledge/materials.js';
 import { warmupEmbedding } from './qdrant.js';
 
 export function createServer(): McpServer {
   const server = new McpServer({
     name: 'moldsim-mcp',
-    version: '0.3.0',
+    version: '0.4.0',
   });
 
   // Start loading embedding model in background
@@ -70,6 +72,40 @@ export function createServer(): McpServer {
     },
     async ({ description, cad_format }) => ({
       content: [{ type: 'text', text: generateSimulationSpec(description, cad_format) }],
+    })
+  );
+
+  // Tool 5: Compare materials
+  server.tool(
+    'compare_materials',
+    `Compare 2-4 materials side-by-side. Returns a table of processing, thermal, and mechanical properties with key differences highlighted. Available materials: ${listMaterials().map(m => m.id).join(', ')}`,
+    {
+      materials: z.array(z.string()).min(2).max(4).describe('List of material IDs to compare (e.g., ["abs-generic", "pc", "pa66-gf30"])'),
+    },
+    async ({ materials }) => ({
+      content: [{ type: 'text', text: compareMaterials(materials) }],
+    })
+  );
+
+  // Tool 6: DFM checklist generator
+  server.tool(
+    'generate_dfm_checklist',
+    'Generate a Design for Manufacturability (DFM) checklist for an injection molded part. Returns pass/warn/fail status for 15+ design rules based on part description and parameters.',
+    {
+      description: z.string().describe('Description of the part (e.g., "Automotive connector housing with snap-fits and thin walls")'),
+      wall_thickness_mm: z.number().optional().describe('Nominal wall thickness in mm'),
+      rib_thickness_mm: z.number().optional().describe('Rib thickness in mm'),
+      rib_height_mm: z.number().optional().describe('Rib height in mm'),
+      draft_angle_deg: z.number().optional().describe('Draft angle in degrees'),
+      material: z.string().optional().describe('Material name or ID (e.g., "PA66-GF30", "ABS")'),
+      has_undercuts: z.boolean().optional().describe('Whether the part has undercut features'),
+      has_texture: z.boolean().optional().describe('Whether surfaces are textured'),
+      texture_depth_mm: z.number().optional().describe('Texture depth in mm (for draft calculation)'),
+      gate_type: z.string().optional().describe('Gate type: "edge", "sub", "pin", "hot", "fan", "tunnel"'),
+      cosmetic_requirements: z.boolean().optional().describe('Whether part has cosmetic surface requirements'),
+    },
+    async (params) => ({
+      content: [{ type: 'text', text: generateDFMChecklist(params) }],
     })
   );
 
