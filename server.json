@@ -1,0 +1,22 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.kobzevvv/moldsim-mcp",
+  "title": "MoldSim MCP Server",
+  "description": "Injection molding simulation expertise — materials, process validation, and DFM checks",
+  "repository": {
+    "url": "https://github.com/kobzevvv/moldsim-mcp",
+    "source": "github"
+  },
+  "version": "0.4.1",
+  "websiteUrl": "https://moldsim.com",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "moldsim-mcp",
+      "version": "0.4.1",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}

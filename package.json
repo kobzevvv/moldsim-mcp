@@ -1,7 +1,8 @@
 {
   "name": "moldsim-mcp",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "MCP server for injection molding simulation knowledge — material properties, process validation, troubleshooting, and simulation spec generation",
+  "mcpName": "io.github.kobzevvv/moldsim-mcp",
   "type": "module",
   "bin": {
     "moldsim-mcp": "dist/index.js"
