@@ -3,6 +3,11 @@
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { createServer } from './server.js';
 
+// Smithery sandbox server for capability scanning
+export function createSandboxServer() {
+  return createServer();
+}
+
 async function main() {
   const server = createServer();
   const transport = new StdioServerTransport();
