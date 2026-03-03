@@ -1116,10 +1116,11 @@ export const MATERIALS: Material[] = [
 /** Lookup material by ID, name, or family (case-insensitive fuzzy match). */
 export function findMaterial(query: string): Material[] {
   const q = query.toLowerCase().replace(/[^a-z0-9]/g, '');
+  if (!q) return [];
   return MATERIALS.filter(m => {
     const targets = [m.id, m.name, m.family, m.filler ?? ''].map(
       s => s.toLowerCase().replace(/[^a-z0-9]/g, '')
-    );
+    ).filter(t => t.length > 0);
     return targets.some(t => t.includes(q) || q.includes(t));
   });
 }
