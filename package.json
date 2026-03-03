@@ -1,6 +1,6 @@
 {
   "name": "moldsim-mcp",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "MCP server for injection molding simulation knowledge — material properties, process validation, troubleshooting, and simulation spec generation",
   "mcpName": "io.github.kobzevvv/moldsim-mcp",
   "type": "module",
@@ -15,6 +15,7 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "start": "node dist/index.js",
+    "test": "node --experimental-vm-modules node_modules/.bin/jest",
     "inspect": "npx @modelcontextprotocol/inspector dist/index.js"
   },
   "keywords": [
@@ -38,7 +39,10 @@
     "zod": "^3.25.0"
   },
   "devDependencies": {
+    "@types/jest": "^30.0.0",
     "@types/node": "^22.0.0",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.6",
     "typescript": "^5.8.0"
   },
   "engines": {

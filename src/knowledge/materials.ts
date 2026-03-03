@@ -1117,12 +1117,25 @@ export const MATERIALS: Material[] = [
 export function findMaterial(query: string): Material[] {
   const q = query.toLowerCase().replace(/[^a-z0-9]/g, '');
   if (!q) return [];
-  return MATERIALS.filter(m => {
-    const targets = [m.id, m.name, m.family, m.filler ?? ''].map(
-      s => s.toLowerCase().replace(/[^a-z0-9]/g, '')
-    ).filter(t => t.length > 0);
-    return targets.some(t => t.includes(q) || q.includes(t));
-  });
+
+  const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const scored = MATERIALS.map(m => {
+    const id = norm(m.id);
+    const name = norm(m.name);
+    const family = norm(m.family);
+    const filler = norm(m.filler ?? '');
+
+    if (id === q) return { m, score: 100 };
+    if (id.startsWith(q) || q.startsWith(id)) return { m, score: 80 };
+    if (id.includes(q) || name.includes(q)) return { m, score: 60 };
+    if (family === q) return { m, score: 50 };
+    if (family.includes(q)) return { m, score: 30 };
+    if (filler.length > 0 && filler.includes(q)) return { m, score: 20 };
+    return { m, score: 0 };
+  }).filter(({ score }) => score > 0);
+
+  scored.sort((a, b) => b.score - a.score);
+  return scored.map(({ m }) => m);
 }
 
 /** List all material IDs and names. */
